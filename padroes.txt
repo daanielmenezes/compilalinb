@@ -1,0 +1,37 @@
+mov $, reg
+mov $, mem
+mov reg, mem
+mov mem, reg
+mov reg, reg
+
+se tiver uma caso que teria que fazer
+mov mem, mem
+
+teremos que fazer
+mov mem, reg
+op  mem, reg
+mov reg, mem
+
+
+
+repetir para addl, subl e imull
+
+
+
+--------------------------------
+
+
+v1 = $4 op v2
+
+
+v2 = v1 op $4
+
+mov $4, -16(%rbp)
+addl  v2, -16(%rbp)
+
+
+se tiver um v em um dos lados
+ex: v1 = v2 + $3
+mov v2, reg
+addl  3, reg
+mov reg, v1
