@@ -44,27 +44,6 @@ static BYTECODE finalizacao = {
     0xc3                   /* ret */ 
 };
 
-static BYTECODE movl_reg2ra = {
-    /* movl %eax, 0(%rbp) */
-    0x89,
-    0x45,                  /* %eax */
-    0x00                   /* shift no rbp */
-};
-
-static BYTECODE movl_num2ra = {
-    /* movl $0, 0(%rbp) */
-    0xc7, 0x45, 
-    0x00,                  /* shift do rbp */
-    0x00, 0x00, 0x00, 0x00 /* numero inteiro */
-};
-
-static BYTECODE addl_num2ra = {
-    /* addl $0, 0(%rbp) */
-    0x81, 0x45, 
-    0x00,                  /* shift do rbp */
-    0x00, 0x00, 0x00, 0x00 /* numero inteiro */
-};
-
  /******************************************************
  *                                                     *
  *               FUNÇÕES AUXILIARES                    *
@@ -82,32 +61,128 @@ static CURSOR grava_bytes(CURSOR cursor, BYTECODE source, int size) {
     return cursor;
 }
 
-static CURSOR grava_atribuicao(CURSOR cursor, FILE **f) {
+static CURSOR mov2eax(CURSOR cursor, char var1, int idx1) {
+    CURSOR end = cursor;
+    int * ptrInt;
+    switch (var1) {
+        case '$':
+            *(end++) = 0xb8;
+            ptrInt = (int *) end;
+            *ptrInt = idx1;
+            end += 4;
+            break;
+        case 'v':
+            *(end++) = 0x8b;
+            *(end++) = 0x45;
+            *(end++) = V(idx1);
+            end += 3;
+            break;
+        case 'p':
+            *(end++) = 0x89;
+            if (idx1 == 1) {
+                *(end++) = 0xf8;
+                break;
+            }
+            else if (idx1 == 2){
+                *(end++) = 0xf0;
+                break;
+            }
+        default:
+            return NULL;
+    }
+    return end;
+}
+/* FUNÇÕES DE CALCULO.
+ * Fazem a operação em cima do valor em eax.
+ * 
+ * 3 casos:  
+ * var2 == $
+ * var2 == v
+ * var2 == p
+ */
+static CURSOR add2eax(CURSOR cursor, char var2, int id2) {
+    CURSOR end = cursor;
+    int * ptrInt;
+    if (var2 == '$' ){
+        *(end++) = 0x5;
+        ptrInt = (int*)end;
+        *ptrInt = id2;
+        end += 4;
+    }
+    else 
+        end = NULL;
+
+    return end;
+}
+
+static CURSOR sub2eax(CURSOR cursor, char var2, int id2) {
+    /* implementar */
+    return NULL;
+}
+
+static CURSOR imul2eax(CURSOR cursor, char var2, int id2) {
+    /* implementar */
+    return NULL;
+}
+
+
+static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
     int idx0, idx1, idx2;
     char var0, var1, var2, op;  
-    CURSOR end;
+    CURSOR beginning, end;
+    beginning = end = cursor;
     int * ptrInt;
     if (fscanf(*f, "%c%d = %c%d %c %c%d", &var0,  &idx0, &var1, &idx1, 
                 &op, &var2, &idx2) != 7)
         return NULL;
 
-    if ( var0 == 'v' && op == '+' && var1 == '$' && var2 == '$' ){
-        end = grava_bytes(cursor, movl_num2ra, sizeof movl_num2ra); 
-        cursor[2] = V(idx0); /* shift do rbp */
-        ptrInt = (int*) &cursor[3];
-        *ptrInt = idx1;
+    end = mov2eax(end, var1, idx1);
+    switch (op) {
+        case '+':
+            end = add2eax(end, var2, idx2);
+            break;
+        case '*':
+            end = imul2eax(end, var2, idx2);
+            break;
+        case '-':
+            end = sub2eax(end, var2, idx2);
+            break;
+        default:
+            return NULL;
+    } 
 
-        cursor = end;
-        end = grava_bytes(cursor, addl_num2ra, sizeof addl_num2ra);
-        cursor[2] = V(idx0); /* shift do rbp */
-        ptrInt =  (int*) &cursor[3];
-        *ptrInt = idx2;
+    /* move o resultado em eax para o local certo: */
+    if (var0 == 'v'){
+        *(end++) = 0x89;
+        *(end++) = 0x45;
+        *(end++) = V(idx0);
     }
+    else if (var0 == 'p') {
+        *(end++) = 0x89;
+        if (idx0 == 1){ 
+            /* (p1) */
+            *(end++) = 0xc7;  /* edi = eax */
+        }
+        else{           
+            /* (p2) */
+            *(end++) = 0xc6;  /* esi = eax */
+        }
+    }
+
     /*printf("%c%d = %c%d %c %c%d\n",*/
             /*var0, idx0, var1, idx1, op, var2, idx2);*/
 
     return end;
 }
+
+
+
+
+ /******************************************************
+ *                                                     *
+ *               FUNÇÕES PRINCIPAIS                    *
+ *                                                     *
+ ******************************************************/
 
 funcp CompilaLinB (FILE *f) {
     int c, line;
@@ -119,17 +194,21 @@ funcp CompilaLinB (FILE *f) {
         switch (c) {
             case 'r': { /* retorno */
                 char c0;
-                if (fscanf(f, "et%c", &c0) != 1)
+                if (fscanf(f, "et%c", &c0) != 1){
+                    free(funcao);
                     error("comando invalido", line);
-                /*printf("ret\n");*/
-                break;
+                }
+                grava_bytes(cursor, finalizacao, sizeof finalizacao );
+                return funcao;
             }
             case 'v':
             case 'p':{ /* atribuicao */
                 ungetc(c, f);
                 cursor = grava_atribuicao(cursor, &f);
-                if (!cursor)
+                if (!cursor){
+                    free(funcao);
                     error("comando invalido", line);
+                }
                 break;
             }
             case ' ':
@@ -141,8 +220,7 @@ funcp CompilaLinB (FILE *f) {
         }
     }
 
-    grava_bytes(cursor, finalizacao, sizeof finalizacao );
-    return funcao;
+    return NULL;
 }
 
 void LiberaFuncao (void *p){

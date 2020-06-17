@@ -53,12 +53,14 @@ mov reg, reg
 
             89 f8                   mov    %edi,%eax
             89 f0                   mov    %esi,%eax
+            89 c7                   mov    %eax,%edi
+            89 c6                   mov    %eax,%esi
             89 f7                   mov    %esi,%edi
             89 fe                   mov    %edi,%esi
-            89 ff                   mov    %edi,%edi
-            89 f6                   mov    %esi,%esi
             89 d8                   mov    %ebx,%eax
             89 c0                   mov    %eax,%eax
+            89 ff                   mov    %edi,%edi
+            89 f6                   mov    %esi,%esi
             89 c3                   mov    %eax,%ebx
 
 
@@ -70,15 +72,17 @@ mov reg, reg
 
 
 imull reg, reg
-            0f af c7                imul   %edi,%eax
-            0f af c6                imul   %esi,%eax
-            0f af fe                imul   %esi,%edi
-            0f af f7                imul   %edi,%esi
-            0f af ff                imul   %edi,%edi
-            0f af f6                imul   %esi,%esi
-            0f af c3                imul   %ebx,%eax
-            0f af c0                imul   %eax,%eax
-            0f af d8                imul   %eax,%ebx
+        0f af c7                imul   %edi,%eax
+        0f af c6                imul   %esi,%eax
+        0f af f8                imul   %eax,%edi
+        0f af f0                imul   %eax,%esi
+        0f af fe                imul   %esi,%edi
+        0f af f7                imul   %edi,%esi
+        0f af c3                imul   %ebx,%eax
+        0f af c0                imul   %eax,%eax
+        0f af ff                imul   %edi,%edi
+        0f af f6                imul   %esi,%esi
+        0f af d8                imul   %eax,%ebx
 
 imull $, reg
             69 c0 nn nn nn nn       imul   $n,%eax,%eax
@@ -125,7 +129,7 @@ addl $, reg -> 05 nn nn nn nn
         81 c6 2c 01 00 00       add    $0x12c,%esi
         81 c7 2c 01 00 00       add    $0x12c,%edi
         41 81 c0 2c 01 00 00    add    $0x12c,%r8d
-     41 81 c1 2c 01 00 00    add    $0x12c,%r9d
+        41 81 c1 2c 01 00 00    add    $0x12c,%r9d
         41 81 c2 2c 01 00 00    add    $0x12c,%r10d
         41 81 c3 2c 01 00 00    add    $0x12c,%r11d
         41 81 c4 2c 01 00 00    add    $0x12c,%r12d
@@ -168,12 +172,14 @@ addl mem, reg -> 03 45 f8
 addl reg, reg (%eax, %eax)-> 01 c3
         01 f8                   add    %edi,%eax
         01 f0                   add    %esi,%eax
+        01 c7                   add    %eax,%edi
+        01 c6                   add    %eax,%esi
         01 f7                   add    %esi,%edi
         01 fe                   add    %edi,%esi
-        01 ff                   add    %edi,%edi
-        01 f6                   add    %esi,%esi
         01 d8                   add    %ebx,%eax
         01 c0                   add    %eax,%eax
+        01 ff                   add    %edi,%edi
+        01 f6                   add    %esi,%esi
         01 c3                   add    %eax,%ebx
 
 
@@ -232,12 +238,14 @@ subl mem, reg -> 2b 45 ss
 subl reg, reg(%eax,%eax) -> 29 c0 
         29 f8                   sub    %edi,%eax
         29 f0                   sub    %esi,%eax
+        29 c7                   sub    %eax,%edi
+        29 c6                   sub    %eax,%esi
         29 f7                   sub    %esi,%edi
         29 fe                   sub    %edi,%esi
-        29 ff                   sub    %edi,%edi
-        29 f6                   sub    %esi,%esi
         29 d8                   sub    %ebx,%eax
         29 c0                   sub    %eax,%eax
+        29 ff                   sub    %edi,%edi
+        29 f6                   sub    %esi,%esi
         29 c3                   sub    %eax,%ebx
 
 
