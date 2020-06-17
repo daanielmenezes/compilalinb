@@ -15,7 +15,23 @@ mov reg, mem
 
 
 repetir para addl, subl e imull
+addl $, mem -> 81 45 ss nn nn nn nn
+addl $, reg -> 05 nn nn nn nn
+addl reg, mem -> 01 45 f8 
+addl mem, reg -> 03 45 f8
+addl reg, reg (%eax, %eax)-> 01 c3
 
+imull $, reg -> 69 c0 nn nn nn nn
+imull $, mem(mismatch)
+imull reg, mem(mismatch)
+imull mem, reg -> 0f af 45 f8 
+imull reg, reg(%eax,%eax) -> 0f af c0 
+
+subl $, reg -> 2d nn nn nn nn
+subl $, mem -> 81 6d f8 nn nn nn nn
+subl reg, mem -> 29 45 f8
+subl mem, reg -> 2b 45 f8
+subl reg, reg(%eax,%eax) -> 29 c0 
 
 
 --------------------------------
