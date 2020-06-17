@@ -61,7 +61,7 @@ static CURSOR grava_bytes(CURSOR cursor, BYTECODE source, int size) {
     return cursor;
 }
 
-static CURSOR mov2eax(CURSOR cursor, char var1, int idx1) {
+static CURSOR mov_varpc2eax(CURSOR cursor, char var1, int idx1) {
     CURSOR end = cursor;
     int * ptrInt;
     switch (var1) {
@@ -125,33 +125,8 @@ static CURSOR imul2eax(CURSOR cursor, char var2, int id2) {
     return NULL;
 }
 
-
-static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
-    int idx0, idx1, idx2;
-    char var0, var1, var2, op;  
-    CURSOR beginning, end;
-    beginning = end = cursor;
-    int * ptrInt;
-    if (fscanf(*f, "%c%d = %c%d %c %c%d", &var0,  &idx0, &var1, &idx1, 
-                &op, &var2, &idx2) != 7)
-        return NULL;
-
-    end = mov2eax(end, var1, idx1);
-    switch (op) {
-        case '+':
-            end = add2eax(end, var2, idx2);
-            break;
-        case '*':
-            end = imul2eax(end, var2, idx2);
-            break;
-        case '-':
-            end = sub2eax(end, var2, idx2);
-            break;
-        default:
-            return NULL;
-    } 
-
-    /* move o resultado em eax para o local certo: */
+static CURSOR mov_eax2varp(CURSOR cursor, char var0, int idx0) {
+    CURSOR end = cursor;
     if (var0 == 'v'){
         *(end++) = 0x89;
         *(end++) = 0x45;
@@ -168,9 +143,37 @@ static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
             *(end++) = 0xc6;  /* esi = eax */
         }
     }
+    return end;
+}
 
-    /*printf("%c%d = %c%d %c %c%d\n",*/
-            /*var0, idx0, var1, idx1, op, var2, idx2);*/
+static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
+    int idx0, idx1, idx2;
+    char var0, var1, var2, op;  
+    CURSOR beginning, end;
+    beginning = end = cursor;
+    int * ptrInt;
+    if (fscanf(*f, "%c%d = %c%d %c %c%d", &var0,  &idx0, &var1, &idx1, 
+                &op, &var2, &idx2) != 7)
+        return NULL;
+
+    end = mov_varpc2eax(end, var1, idx1);
+
+    switch (op) {
+        case '+':
+            end = add2eax(end, var2, idx2);
+            break;
+        case '*':
+            end = imul2eax(end, var2, idx2);
+            break;
+        case '-':
+            end = sub2eax(end, var2, idx2);
+            break;
+        default:
+            return NULL;
+    } 
+
+    /* move o resultado em eax para o local certo: */
+    end = mov_eax2varp(end, var0, idx0);
 
     return end;
 }
