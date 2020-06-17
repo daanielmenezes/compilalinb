@@ -96,8 +96,6 @@ imull $, reg
             45 69 f6 nn nn nn nn    imul   $n,%r14d,%r14d
             45 69 ff nn nn nn nn    imul   $n,%r15d,%r15d
 
-imull $, mem ---- NAO FUNCIONA
-
 imull mem, reg
             0f af 45 ss             imul   -0x8(%rbp),%eax
             0f af 7d ss             imul   -0x10(%rbp),%edi
@@ -118,22 +116,143 @@ mov reg, mem
 
 repetir para addl, subl e imull
 addl $, mem -> 81 45 ss nn nn nn nn
-addl $, reg -> 05 nn nn nn nn
-addl reg, mem -> 01 45 f8 
-addl mem, reg -> 03 45 f8
-addl reg, reg (%eax, %eax)-> 01 c3
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
+        81 45 f0 2c 01 00 00    addl   $0x12c,-0x10(%rbp)
 
-imull $, reg -> 69 c0 nn nn nn nn
-imull $, mem(mismatch)
-imull reg, mem(mismatch)
-imull mem, reg -> 0f af 45 f8 
-imull reg, reg(%eax,%eax) -> 0f af c0 
+addl $, reg -> 05 nn nn nn nn
+        05 2c 01 00 00          add    $0x12c,%eax
+        81 c3 2c 01 00 00       add    $0x12c,%ebx
+        81 c1 2c 01 00 00       add    $0x12c,%ecx
+        81 c2 2c 01 00 00       add    $0x12c,%edx
+        81 c6 2c 01 00 00       add    $0x12c,%esi
+        81 c7 2c 01 00 00       add    $0x12c,%edi
+        41 81 c0 2c 01 00 00    add    $0x12c,%r8d
+        41 81 c1 2c 01 00 00    add    $0x12c,%r9d
+        41 81 c2 2c 01 00 00    add    $0x12c,%r10d
+        41 81 c3 2c 01 00 00    add    $0x12c,%r11d
+        41 81 c4 2c 01 00 00    add    $0x12c,%r12d
+        41 81 c5 2c 01 00 00    add    $0x12c,%r13d
+        41 81 c6 2c 01 00 00    add    $0x12c,%r14d
+        41 81 c7 2c 01 00 00    add    $0x12c,%r15d
+
+addl reg, mem -> 01 45 f8 
+        01 45 f0                add    %eax,-0x10(%rbp)
+        01 5d f0                add    %ebx,-0x10(%rbp)
+        01 4d f0                add    %ecx,-0x10(%rbp)
+        01 55 f0                add    %edx,-0x10(%rbp)
+        01 75 f0                add    %esi,-0x10(%rbp)
+        01 7d f0                add    %edi,-0x10(%rbp)
+        44 01 45 f0             add    %r8d,-0x10(%rbp)
+        44 01 4d f0             add    %r9d,-0x10(%rbp)
+        44 01 55 f0             add    %r10d,-0x10(%rbp)
+        44 01 5d f0             add    %r11d,-0x10(%rbp)
+        44 01 65 f0             add    %r12d,-0x10(%rbp)
+        44 01 6d f0             add    %r13d,-0x10(%rbp)
+        44 01 75 f0             add    %r14d,-0x10(%rbp)
+        44 01 7d f0             add    %r15d,-0x10(%rbp)
+
+addl mem, reg -> 03 45 f8
+        03 45 f0                add    -0x10(%rbp),%eax
+        03 5d f0                add    -0x10(%rbp),%ebx
+        03 4d f0                add    -0x10(%rbp),%ecx
+        03 55 f0                add    -0x10(%rbp),%edx
+        03 75 f0                add    -0x10(%rbp),%esi
+        03 7d f0                add    -0x10(%rbp),%edi
+        44 03 45 f0             add    -0x10(%rbp),%r8d
+        44 03 4d f0             add    -0x10(%rbp),%r9d
+        44 03 55 f0             add    -0x10(%rbp),%r10d
+        44 03 5d f0             add    -0x10(%rbp),%r11d
+        44 03 65 f0             add    -0x10(%rbp),%r12d
+        44 03 6d f0             add    -0x10(%rbp),%r13d
+        44 03 75 f0             add    -0x10(%rbp),%r14d
+        44 03 7d f0             add    -0x10(%rbp),%r15d
+
+addl reg, reg (%eax, %eax)-> 01 c3
+        01 f8                   add    %edi,%eax
+        01 f0                   add    %esi,%eax
+        01 f7                   add    %esi,%edi
+        01 fe                   add    %edi,%esi
+        01 ff                   add    %edi,%edi
+        01 f6                   add    %esi,%esi
+        01 d8                   add    %ebx,%eax
+        01 c0                   add    %eax,%eax
+        01 c3                   add    %eax,%ebx
+
+
+
 
 subl $, reg -> 2d nn nn nn nn
-subl $, mem -> 81 6d f8 nn nn nn nn
-subl reg, mem -> 29 45 f8
-subl mem, reg -> 2b 45 f8
+        2d nn nn nn nn          sub    $0x12c,%eax
+        81 eb nn nn nn nn       sub    $0x12c,%ebx
+        81 e9 nn nn nn nn       sub    $0x12c,%ecx
+        81 ea nn nn nn nn       sub    $0x12c,%edx
+        81 ee nn nn nn nn       sub    $0x12c,%esi
+        81 ef nn nn nn nn       sub    $0x12c,%edi
+        41 81 e8 nn nn nn nn    sub    $0x12c,%r8d
+        41 81 e9 nn nn nn nn    sub    $0x12c,%r9d
+        41 81 ea nn nn nn nn    sub    $0x12c,%r10d
+        41 81 eb nn nn nn nn    sub    $0x12c,%r11d
+        41 81 ec nn nn nn nn    sub    $0x12c,%r12d
+        41 81 ed nn nn nn nn    sub    $0x12c,%r13d
+        41 81 ee nn nn nn nn    sub    $0x12c,%r14d
+        41 81 ef nn nn nn nn    sub    $0x12c,%r15d
+
+subl $, mem -> 81 6d ss nn nn nn nn
+
+subl reg, mem -> 29 45 ss
+        29 45 ss                sub    %eax,-0x10(%rbp)
+        29 5d ss                sub    %ebx,-0x10(%rbp)
+        29 4d ss                sub    %ecx,-0x10(%rbp)
+        29 55 ss                sub    %edx,-0x10(%rbp)
+        29 75 ss                sub    %esi,-0x10(%rbp)
+        29 7d ss                sub    %edi,-0x10(%rbp)
+        44 29 45 ss             sub    %r8d,-0x10(%rbp)
+        44 29 4d ss             sub    %r9d,-0x10(%rbp)
+        44 29 55 ss             sub    %r10d,-0x10(%rbp)
+        44 29 5d ss             sub    %r11d,-0x10(%rbp)
+        44 29 65 ss             sub    %r12d,-0x10(%rbp)
+        44 29 6d ss             sub    %r13d,-0x10(%rbp)
+        44 29 75 ss             sub    %r14d,-0x10(%rbp)
+        44 29 7d ss             sub    %r15d,-0x10(%rbp)
+
+subl mem, reg -> 2b 45 ss
+        2b 45 ss                sub    -0x10(%rbp),%eax
+        2b 5d ss                sub    -0x10(%rbp),%ebx
+        2b 4d ss                sub    -0x10(%rbp),%ecx
+        2b 55 ss                sub    -0x10(%rbp),%edx
+        2b 75 ss                sub    -0x10(%rbp),%esi
+        2b 7d ss                sub    -0x10(%rbp),%edi
+        44 2b 45 ss             sub    -0x10(%rbp),%r8d
+        44 2b 4d ss             sub    -0x10(%rbp),%r9d
+        44 2b 55 ss             sub    -0x10(%rbp),%r10d
+        44 2b 5d ss             sub    -0x10(%rbp),%r11d
+        44 2b 65 ss             sub    -0x10(%rbp),%r12d
+        44 2b 6d ss             sub    -0x10(%rbp),%r13d
+        44 2b 75 ss             sub    -0x10(%rbp),%r14d
+        44 2b 7d ss             sub    -0x10(%rbp),%r15d
+
 subl reg, reg(%eax,%eax) -> 29 c0 
+        29 f8                   sub    %edi,%eax
+        29 f0                   sub    %esi,%eax
+        29 f7                   sub    %esi,%edi
+        29 fe                   sub    %edi,%esi
+        29 ff                   sub    %edi,%edi
+        29 f6                   sub    %esi,%esi
+        29 d8                   sub    %ebx,%eax
+        29 c0                   sub    %eax,%eax
+        29 c3                   sub    %eax,%ebx
 
 
 --------------------------------
