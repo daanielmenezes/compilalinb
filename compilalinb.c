@@ -112,7 +112,7 @@ static CURSOR grava_atribuicao(CURSOR cursor, FILE **f) {
 funcp CompilaLinB (FILE *f) {
     int c, line;
     CURSOR cursor;
-    funcp funcao = (funcp) malloc(50);
+    funcp funcao = (funcp) malloc(10000);
     cursor = grava_bytes((CURSOR) funcao, prologo, sizeof prologo);
 
     for (line = 1;(c=fgetc(f)) != EOF; line++){
@@ -148,4 +148,3 @@ funcp CompilaLinB (FILE *f) {
 void LiberaFuncao (void *p){
     free(p);
 }
-
