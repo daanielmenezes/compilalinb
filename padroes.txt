@@ -1,8 +1,110 @@
-mov $, reg
+mov $, reg      
+        b8 nn nn nn nn          mov    $0x5,%eax
+        bb nn nn nn nn          mov    $0x5,%ebx
+        b9 nn nn nn nn          mov    $0x5,%ecx
+        ba nn nn nn nn          mov    $0x5,%edx
+        be nn nn nn nn          mov    $0x5,%esi
+        bf nn nn nn nn          mov    $0x5,%edi
+        41 b8 nn nn nn nn       mov    $0x5,%r8d
+        41 b9 nn nn nn nn       mov    $0x5,%r9d
+        41 ba nn nn nn nn       mov    $0x5,%r10d
+        41 bb nn nn nn nn       mov    $0x5,%r11d
+        41 bc nn nn nn nn       mov    $0x5,%r12d
+        41 bd nn nn nn nn       mov    $0x5,%r13d
+        41 be nn nn nn nn       mov    $0x5,%r14d
+        41 bf nn nn nn nn       mov    $0x5,%r15d
+
 mov $, mem
+            c7 45 ss nn nn nn nn
+
 mov reg, mem
+            89 45 ss                mov    %eax,-0x10(%rbp)
+            89 5d ss                mov    %ebx,-0x10(%rbp)
+            89 4d ss                mov    %ecx,-0x10(%rbp)
+            89 55 ss                mov    %edx,-0x10(%rbp)
+            89 75 ss                mov    %esi,-0x10(%rbp)
+            89 7d ss                mov    %edi,-0x10(%rbp)
+            44 89 45 ss             mov    %r8d,-0x10(%rbp)
+            44 89 4d ss             mov    %r9d,-0x10(%rbp)
+            44 89 55 ss             mov    %r10d,-0x10(%rbp)
+            44 89 5d ss             mov    %r11d,-0x10(%rbp)
+            44 89 65 ss             mov    %r12d,-0x10(%rbp)
+            44 89 6d ss             mov    %r13d,-0x10(%rbp)
+            44 89 75 ss             mov    %r14d,-0x10(%rbp)
+            44 89 7d ss             mov    %r15d,-0x10(%rbp)
+
 mov mem, reg
+            8b 45 ss                mov    -0x10(%rbp),%eax
+            8b 5d ss                mov    -0x10(%rbp),%ebx
+            8b 4d ss                mov    -0x10(%rbp),%ecx
+            8b 55 ss                mov    -0x10(%rbp),%edx
+            8b 75 ss                mov    -0x10(%rbp),%esi
+            8b 7d ss                mov    -0x10(%rbp),%edi
+            44 8b 45 ss             mov    -0x10(%rbp),%r8d
+            44 8b 4d ss             mov    -0x10(%rbp),%r9d
+            44 8b 55 ss             mov    -0x10(%rbp),%r10d
+            44 8b 5d ss             mov    -0x10(%rbp),%r11d
+            44 8b 65 ss             mov    -0x10(%rbp),%r12d
+            44 8b 6d ss             mov    -0x10(%rbp),%r13d
+            44 8b 75 ss             mov    -0x10(%rbp),%r14d
+            44 8b 7d ss             mov    -0x10(%rbp),%r15d
+
 mov reg, reg
+
+            89 f8                   mov    %edi,%eax
+            89 f0                   mov    %esi,%eax
+            89 f7                   mov    %esi,%edi
+            89 fe                   mov    %edi,%esi
+            89 ff                   mov    %edi,%edi
+            89 f6                   mov    %esi,%esi
+            89 d8                   mov    %ebx,%eax
+            89 c0                   mov    %eax,%eax
+            89 c3                   mov    %eax,%ebx
+
+
+
+
+
+
+
+
+
+imull reg, reg
+            0f af c7                imul   %edi,%eax
+            0f af c6                imul   %esi,%eax
+            0f af fe                imul   %esi,%edi
+            0f af f7                imul   %edi,%esi
+            0f af ff                imul   %edi,%edi
+            0f af f6                imul   %esi,%esi
+            0f af c3                imul   %ebx,%eax
+            0f af c0                imul   %eax,%eax
+            0f af d8                imul   %eax,%ebx
+
+imull $, reg
+            69 c0 nn nn nn nn       imul   $n,%eax,%eax
+            69 db nn nn nn nn       imul   $n,%ebx,%ebx
+            69 c9 nn nn nn nn       imul   $n,%ecx,%ecx
+            69 d2 nn nn nn nn       imul   $n,%edx,%edx
+            69 f6 nn nn nn nn       imul   $n,%esi,%esi
+            69 ff nn nn nn nn       imul   $n,%edi,%edi
+            45 69 c0 nn nn nn nn    imul   $n,%r8d,%r8d
+            45 69 c9 nn nn nn nn    imul   $n,%r9d,%r9d
+            45 69 d2 nn nn nn nn    imul   $n,%r10d,%r10d
+            45 69 db nn nn nn nn    imul   $n,%r11d,%r11d
+            45 69 e4 nn nn nn nn    imul   $n,%r12d,%r12d
+            45 69 ed nn nn nn nn    imul   $n,%r13d,%r13d
+            45 69 f6 nn nn nn nn    imul   $n,%r14d,%r14d
+            45 69 ff nn nn nn nn    imul   $n,%r15d,%r15d
+
+imull $, mem ---- NAO FUNCIONA
+
+imull mem, reg
+            0f af 45 ss             imul   -0x8(%rbp),%eax
+            0f af 7d ss             imul   -0x10(%rbp),%edi
+            0f af 75 ss             imul   -0x4(%rbp),%esi
+            0f af 5d ss             imul   0x0(%rbp),%ebx
+
+
 
 se tiver uma caso que teria que fazer
 mov mem, mem
