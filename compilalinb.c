@@ -218,23 +218,24 @@ static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
                 &op, &var2, &idx2) != 7)
         return NULL;
 
+    /* move o primeiro operando para o eax */
     end = mov_varpc2eax(end, var1, idx1);
 
     switch (op) {
         case '+':
             end = add2eax(end, var2, idx2);
-            break;
+            if (end) break;
         case '*':
             end = imul2eax(end, var2, idx2);
-            break;
+            if (end) break;
         case '-':
             end = sub2eax(end, var2, idx2);
-            break;
+            if (end) break;
         default:
             return NULL;
     } 
 
-    /* move o resultado em eax para o local certo: */
+    /* atribui o resultado em eax para o varp dado: */
     end = mov_eax2varp(end, var0, idx0);
 
     return end;
