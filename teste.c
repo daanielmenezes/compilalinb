@@ -16,7 +16,6 @@ FILE *try_open(const char *filename) {
 }
 
 int main( void ) {
-    int i;
     FILE *file;
     funcp func;
     char *strRodando = "Rodando teste %d: ";
