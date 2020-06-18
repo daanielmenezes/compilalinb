@@ -132,13 +132,69 @@ static CURSOR add2eax(CURSOR cursor, char var2, int id2) {
 }
 
 static CURSOR sub2eax(CURSOR cursor, char var2, int id2) {
-    /* implementar */
-    return NULL;
+    CURSOR end = cursor;
+    int * ptrInt;
+    if (var2 == '$' ){
+        *(end++) = 0x2d;
+        ptrInt = (int*) end;
+        *ptrInt = id2;
+        end += 4;
+    }
+    else if ( var2 == 'v'){
+        *(end++) = 0x2b;
+        *(end++) = 0x45;
+        *(end++) = V(id2);
+    }
+    else if (var2 == 'p'){
+        *(end++) = 0x29;
+        if (id2 == 1) {
+            *(end++) = 0xf8;
+        }
+        else if (id2 == 2) {
+            *(end++) = 0xf0;
+        }
+        else
+            end = NULL;
+    }
+    else 
+        end = NULL;
+
+    return end;
 }
 
 static CURSOR imul2eax(CURSOR cursor, char var2, int id2) {
-    /* implementar */
-    return NULL;
+     CURSOR end = cursor;
+    int * ptrInt;
+    if (var2 == '$' ){
+        *(end++) = 0x69;
+        *(end++) = 0xc0;
+        ptrInt = (int*) end;
+        *ptrInt = id2;
+        end += 4;
+    }
+    else if ( var2 == 'v'){
+        *(end++) = 0x0f;
+        *(end++) = 0xaf;
+        *(end++) = 0x45;
+        *(end++) = V(id2);
+    }
+    else if (var2 == 'p'){
+        *(end++) = 0x0f;
+        *(end++) = 0xaf;
+        if (id2 == 1) {
+            
+            *(end++) = 0xc7;
+        }
+        else if (id2 == 2) {
+            *(end++) = 0xc6;
+        }
+        else
+            end = NULL;
+    }
+    else 
+        end = NULL;
+
+    return end;
 }
 
 static CURSOR mov_eax2varp(CURSOR cursor, char var0, int idx0) {
