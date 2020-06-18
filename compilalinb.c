@@ -21,10 +21,6 @@
 
 typedef const unsigned char BYTECODE[];
 typedef unsigned char * CURSOR;
-typedef union {
-    char c;
-    int i;
-} *MASK;
 
  /**************************************************
  *                                                 *
@@ -205,12 +201,10 @@ static CURSOR mov_eax2varp(CURSOR cursor, char var0, int idx0) {
     else if (var0 == 'p') {
         *(end++) = 0x89;
         if (idx0 == 1){ 
-            /* (p1) */
-            *(end++) = 0xc7;  /* edi = eax */
+            *(end++) = 0xc7;
         }
         else{           
-            /* (p2) */
-            *(end++) = 0xc6;  /* esi = eax */
+            *(end++) = 0xc6;
         }
     }
     return end;
@@ -219,9 +213,7 @@ static CURSOR mov_eax2varp(CURSOR cursor, char var0, int idx0) {
 static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
     int idx0, idx1, idx2;
     char var0, var1, var2, op;  
-    CURSOR beginning, end;
-    beginning = end = cursor;
-    int * ptrInt;
+    CURSOR end = cursor;
     if (fscanf(*f, "%c%d = %c%d %c %c%d", &var0,  &idx0, &var1, &idx1, 
                 &op, &var2, &idx2) != 7)
         return NULL;
@@ -272,7 +264,7 @@ funcp CompilaLinB (FILE *f) {
                     error("comando invalido", line);
                 }
                 grava_bytes(cursor, finalizacao, sizeof finalizacao );
-                return funcao;
+                break;
             }
             case 'v':
             case 'p':{ /* atribuicao */
@@ -293,7 +285,7 @@ funcp CompilaLinB (FILE *f) {
         }
     }
 
-    return NULL;
+    return funcao;
 }
 
 void LiberaFuncao (void *p){
