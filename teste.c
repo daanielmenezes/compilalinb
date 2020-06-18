@@ -57,6 +57,7 @@ int main( void ) {
     assert(func(-1,1) == 0);
     assert(func(-12,13) == -25);
     assert(func(25,31) == -336);
+    assert(func(3,1) == 8);
     printf("OK.\n");
 
     return 0;
