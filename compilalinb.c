@@ -105,9 +105,25 @@ static CURSOR add2eax(CURSOR cursor, char var2, int id2) {
     int * ptrInt;
     if (var2 == '$' ){
         *(end++) = 0x5;
-        ptrInt = (int*)end;
+        ptrInt = (int*) end;
         *ptrInt = id2;
         end += 4;
+    }
+    else if ( var2 == 'v'){
+        *(end++) = 0x03;
+        *(end++) = 0x45;
+        *(end++) = V(id2);
+    }
+    else if (var2 == 'p'){
+        *(end++) = 0x01;
+        if (id2 == 1) {
+            *(end++) = 0xf8;
+        }
+        else if (id2 == 2) {
+            *(end++) = 0xf0;
+        }
+        else
+            end = NULL;
     }
     else 
         end = NULL;
