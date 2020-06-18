@@ -53,6 +53,10 @@ int main( void ) {
     fclose(file);
     assert(func != NULL);
     assert(func(1,1) == 0);
+    assert(func(1,2) == -3);
+    assert(func(-1,1) == 0);
+    assert(func(-12,13) == -25);
+    assert(func(25,31) == -336);
     printf("OK.\n");
 
     return 0;
