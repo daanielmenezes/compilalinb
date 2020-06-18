@@ -81,9 +81,9 @@ int main( void ) {
     assert(func != NULL);
     assert(func(0) == 0);
     assert(func(1) == 1);
-    assert(func(3) == 15);
-    assert(func(4) == 31);
-    assert(func(5) == 56);
+    assert(func(3) == 14);
+    assert(func(4) == 30);
+    assert(func(5) == 55);
     printf("OK.\n");
 
     return 0;
