@@ -75,7 +75,6 @@ static CURSOR mov_varpc2eax(CURSOR cursor, char var1, int idx1) {
             *(end++) = 0x8b;
             *(end++) = 0x45;
             *(end++) = V(idx1);
-            end += 3;
             break;
         case 'p':
             *(end++) = 0x89;
@@ -163,7 +162,7 @@ static CURSOR sub2eax(CURSOR cursor, char var2, int id2) {
 }
 
 static CURSOR imul2eax(CURSOR cursor, char var2, int id2) {
-     CURSOR end = cursor;
+    CURSOR end = cursor;
     int * ptrInt;
     if (var2 == '$' ){
         *(end++) = 0x69;
@@ -182,7 +181,6 @@ static CURSOR imul2eax(CURSOR cursor, char var2, int id2) {
         *(end++) = 0x0f;
         *(end++) = 0xaf;
         if (id2 == 1) {
-            
             *(end++) = 0xc7;
         }
         else if (id2 == 2) {

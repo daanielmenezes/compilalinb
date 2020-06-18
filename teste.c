@@ -31,7 +31,7 @@ int main( void ) {
     printf("OK.\n");
 
 
-    /* teste 1 (teste0.linb) */
+    /* teste 1 (teste1.linb) */
     file = try_open("teste1.linb");
     printf(strRodando, 1);
     func = CompilaLinB(file);
@@ -42,20 +42,17 @@ int main( void ) {
     assert(func(60) == 61);
     assert(func(10) == 11);
     assert(func(-40) == -39);
+    printf("OK.\n");
 
 
 
-    /* teste 2 (teste0.linb) */
+    /* teste 2 (teste2.linb) */
     file = try_open("teste2.linb");
     printf(strRodando, 2);
     func = CompilaLinB(file);
     fclose(file);
     assert(func != NULL);
-    assert(func(1.1) == 0);
-    
-
-
-
+    assert(func(1,1) == 0);
     printf("OK.\n");
 
     return 0;
