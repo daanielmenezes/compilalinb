@@ -270,7 +270,7 @@ static CURSOR grava_if(CURSOR cursor, FILE **f) {
     /* write je <line> */
     /* line will be translated to offset later */
     *(end++) = 0x0f;
-    *(end++) = 0x84;
+    *(end++) = 0x85;
     intptr = (int*)end;
     *intptr = line;
     end += 4;
@@ -282,7 +282,12 @@ void write_offsets(funcp funcao, void *lineAdress[MAX_LINB_LINES], int lines) {
     CURSOR cursor = (CURSOR)funcao;
     for (i = 0; i<lines; i++) {
         cursor = lineAdress[i];
-        if (cursor[0] == 0x0f && cursor[1] == 0x84) {
+        if (cursor[0] == 0x83 && (cursor[1] == 0xff || cursor[1]==0x7d ||
+                                  cursor[1] == 0xfe)) {
+            if(cursor[1] == 0x7d)
+                cursor+=4;
+            else
+                cursor+=3;
             ptrInt = (int*)&cursor[2];
             *ptrInt = lineAdress[*ptrInt - 1] - (void*)(&cursor[6]); 
         }
@@ -304,7 +309,6 @@ funcp CompilaLinB (FILE *f) {
 
     for (line = 0;(c=fgetc(f)) != EOF;line++){
         lineAdress[line] = cursor;
-        printf("c: %c, line: %d\n", c, line);
         switch (c) {
             case 'i': { /* if */
                 cursor = grava_if(cursor, &f);
