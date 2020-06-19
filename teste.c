@@ -59,5 +59,31 @@ int main( void ) {
     assert(func(3,1) == 8);
     printf("OK.\n");
 
+    /* teste 3 (teste3.linb) */
+    file = try_open("teste3.linb");
+    printf(strRodando, 3);
+    func = CompilaLinB(file);
+    fclose(file);
+    assert(func != NULL);
+    assert(func(0) == 1);
+    assert(func(1) == 1);
+    assert(func(3) == 6);
+    assert(func(7) == 5040);
+    assert(func(8) == 40320);
+    printf("OK.\n");
+    
+    /*teste 4 (teste4.linb)*/
+    file = try_open("teste4.linb");
+    printf(strRodando, 4);
+    func = CompilaLinB(file);
+    fclose(file);
+    assert(func != NULL);
+    assert(func(0) == 0);
+    assert(func(1) == 1);
+    assert(func(3) == 14);
+    assert(func(4) == 30);
+    assert(func(5) == 55);
+    printf("OK.\n");
+
     return 0;
 }

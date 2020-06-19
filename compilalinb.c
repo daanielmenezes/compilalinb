@@ -10,6 +10,7 @@
 #include <string.h>
 #include "compilalinb.h"
 
+#define MAX_LINB_LINES 1000
 
 /* Macro para o shift da variavel no registro de ativacao 
  *  v1 ->  -16(%rbp)
@@ -34,7 +35,7 @@ static BYTECODE prologo = {
     0x48, 0x83, 0xec, 0x10  /* subq $16, %rsp  */
 };
 
-static BYTECODE finalizacao = {
+static BYTECODE retorno = {
     0x8b, 0x45, 0xf0,      /* movl -16(%rbp), %eax */
     0xc9,                  /* leave */
     0xc3                   /* ret */ 
@@ -218,6 +219,7 @@ static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
                 &op, &var2, &idx2) != 7)
         return NULL;
 
+    /* move o primeiro operando para o eax */
     end = mov_varpc2eax(end, var1, idx1);
 
     switch (op) {
@@ -233,15 +235,64 @@ static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
         default:
             return NULL;
     } 
-
-    /* move o resultado em eax para o local certo: */
+    if (!end) return NULL;
+    /* atribui o resultado em eax para o varp dado: */
     end = mov_eax2varp(end, var0, idx0);
 
     return end;
 }
 
+static CURSOR grava_if(CURSOR cursor, FILE **f) {
+    char varp;
+    int id, line, *intptr;
+    CURSOR end = cursor;
+    if (fscanf(*f, "f %c%d %d", &varp, &id, &line) != 3){
+        return NULL; 
+    }
 
+    /* write cmp $0, <varp> */
+    *(end++) = 0x83;
+    if (varp == 'v'){
+        *(end++) = 0x7d;
+        *(end++) = V(id);
+    }
+    else if (varp == 'p' && id == 1) {
+        *(end++) = 0xff;
+    }
+    else if ( varp == 'p' && id == 2 ) {
+        *(end++) = 0xfe;
+    }
+    else {
+        return NULL;
+    }
+    *(end++) = 0x00;
+    
+    /* write je <line> */
+    /* line will be translated to offset later */
+    *(end++) = 0x0f;
+    *(end++) = 0x85;
+    intptr = (int*)end;
+    *intptr = line;
+    end += 4;
+    return end;
+}
 
+void write_offsets(funcp funcao, void *lineAdress[MAX_LINB_LINES], int lines) {
+    int i, *ptrInt;
+    CURSOR cursor = (CURSOR)funcao;
+    for (i = 0; i<lines; i++) {
+        cursor = lineAdress[i];
+        if (cursor[0] == 0x83 && (cursor[1] == 0xff || cursor[1]==0x7d ||
+                                  cursor[1] == 0xfe)) {
+            if(cursor[1] == 0x7d)
+                cursor+=4;
+            else
+                cursor+=3;
+            ptrInt = (int*)&cursor[2];
+            *ptrInt = lineAdress[*ptrInt - 1] - (void*)(&cursor[6]); 
+        }
+    }
+}
 
  /******************************************************
  *                                                     *
@@ -252,39 +303,41 @@ static CURSOR grava_atribuicao(const CURSOR cursor, FILE **f) {
 funcp CompilaLinB (FILE *f) {
     int c, line;
     CURSOR cursor;
-    funcp funcao = (funcp) malloc(10000);
+    void * lineAdress[MAX_LINB_LINES];
+    funcp funcao = (funcp) malloc(MAX_LINB_LINES*10);
     cursor = grava_bytes((CURSOR) funcao, prologo, sizeof prologo);
 
-    for (line = 1;(c=fgetc(f)) != EOF; line++){
+    for (line = 0;(c=fgetc(f)) != EOF;line++){
+        lineAdress[line] = cursor;
         switch (c) {
+            case 'i': { /* if */
+                cursor = grava_if(cursor, &f);
+                break;
+            }
             case 'r': { /* retorno */
                 char c0;
-                if (fscanf(f, "et%c", &c0) != 1){
-                    free(funcao);
-                    error("comando invalido", line);
-                }
-                grava_bytes(cursor, finalizacao, sizeof finalizacao );
+                if ( fscanf(f, "et%c", &c0) != 1 )
+                    cursor = NULL;
+                else
+                    cursor = grava_bytes(cursor, retorno, sizeof retorno);
                 break;
             }
             case 'v':
-            case 'p':{ /* atribuicao */
+            case 'p': { /* atribuicao */
                 ungetc(c, f);
                 cursor = grava_atribuicao(cursor, &f);
-                if (!cursor){
-                    free(funcao);
-                    error("comando invalido", line);
-                }
                 break;
             }
-            case ' ':
-            case '\n':
-            case '\t':
-                break;
             default:
-                error("comando desconhecido", line);
+                error("comando desconhecido", line+1);
         }
+        if (!cursor){
+            free(funcao);
+            error("comando invalido", line+1);
+        }
+        fscanf(f, " "); 
     }
-
+    write_offsets(funcao, lineAdress, line);
     return funcao;
 }
 
