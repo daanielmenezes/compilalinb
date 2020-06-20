@@ -1,0 +1,81 @@
+Dupla:
+ Daniel Menezes C. L. dos Passos 1913037  3WB
+ Theo Falcato R. P. de Athayde   1912971  3WB
+
+Código funcionando em todos os casos dos nossos testes.
+Testes executados:
+
+teste 1:
+    -função em linb:
+
+    v1 = $0 + $1
+    ret
+
+    -asserts:
+
+    assert(func() == 1);
+
+
+teste 2:
+    -função em linb:
+    v1 = p1 + $1
+    ret
+
+    -asserts:
+    assert(func(-20) == -19);
+    assert(func(314) == 315);
+    assert(func(60) == 61);
+    assert(func(10) == 11);
+    assert(func(-40) == -39);
+
+teste 3:
+    -função em linb:
+    v1 = p1 + p2
+    p1 = p1 - p2
+    v1 = v1 * p1
+    ret
+
+    -asserts:
+    assert(func(1,1) == 0);
+    assert(func(1,2) == -3);
+    assert(func(-1,1) == 0);
+    assert(func(-12,13) == -25);
+    assert(func(25,31) == -336);
+    assert(func(3,1) == 8);
+
+teste 4:
+    -função em linb:
+    v1 = $0 + $1
+    if p1 4
+    ret
+    v1 = v1 * p1
+    p1 = p1 - $1
+    if p1 4
+    ret
+
+    -asserts:
+    assert(func(0) == 1);
+    assert(func(1) == 1);
+    assert(func(3) == 6);
+    assert(func(7) == 5040);
+    assert(func(8) == 40320);
+
+teste 5:
+    -função em linb:
+    v1 = $0 + $0
+    v2 = $1 + $0
+    p1 = p1 + $1
+    v3 = p1 - v2
+    if v3 7
+    ret
+    v3 = v2 * v2
+    v1 = v1 + v3
+    v2 = v2 + $1
+    if v2 4
+
+    asserts:
+    assert(func(0) == 0);
+    assert(func(1) == 1);
+    assert(func(3) == 14);
+    assert(func(4) == 30);
+    assert(func(5) == 55);
